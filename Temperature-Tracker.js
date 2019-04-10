@@ -13,6 +13,55 @@
 
 // If there is more than one mode, return any of the modes.
 
+class TempTracker {
+    constructor() {
+        // mode
+        this.occurrences = Array(140).fill(0)
+        this.mode = 0
+        this.maxOccurrences = 0
+        // mean
+        this.numberOfReadings = 0
+        this.sumOfReadings = 0
+        this.mean = 0
+        // min & max
+        this.minTemp = 0
+        this.maxTemp = 0
+    }
+    insert(temp) {
+        // mode
+        // increment the number of times this temp has appeared
+        this.occurrences[temp]++
+        // update our maxOccurrences and mode variables if necessary
+        if (this.occurrences[temp] > this.maxOccurrences) {
+            this.mode = temp
+            this.maxOccurrences = this.occurrences[temp]
+        }
+        // mean
+        this.numberOfReadings++
+        this.sumOfReadings += temp
+        this.mean = this.sumOfReadings / this.numberOfReadings
+
+        // min & max
+        if (this.minTemp > temp || this.minTemp === 0) {
+            this.minTemp = temp
+        }
+        if (this.maxTemp < temp) {
+            this.maxTemp = temp
+        }
+    }
+    getMax() {
+        return this.maxTemp
+    }
+    getMin() {
+        return this.minTemp
+    }
+    getMean() {
+        return this.mean
+    }
+    getMode() {
+        return this.mode
+    }
+}
 const tracker = new TempTracker()
 tracker.insert(32)
 

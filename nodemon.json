@@ -1,5 +1,6 @@
 {
   "watch": ["*.ts"],
   "ext": "ts",
-  "exec": "npx tsx reducer.ts"
+  "exec": "npx tsx",
+  "args": ["${1}"]
 }

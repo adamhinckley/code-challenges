@@ -95,6 +95,12 @@ const fetchInventory = async (): Promise<ProductInventory[]> => {
 interface EnrichedProduct {
   // Define the shape of your combined data structure
   // TODO: Add properties that combine all three data sources
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  pricing: ProductPrice;
+  inventory: ProductInventory;
 }
 
 async function aggregateProductData(): Promise<EnrichedProduct[]> {
@@ -103,8 +109,35 @@ async function aggregateProductData(): Promise<EnrichedProduct[]> {
   // 2. Combine the data by matching productId
   // 3. Handle missing data appropriately
   // 4. Return enriched product array
+  const [products, pricing, inventory] = await Promise.all([
+    fetchProducts(),
+    fetchPricing(),
+    fetchInventory(),
+  ]);
 
-  throw new Error("Not implemented");
+  // convert pricing and inventory into objects that can be accessed with bracket notation
+  const pricingById = pricing.reduce(
+    (acc, item) => {
+      acc[item.productId] = item;
+      return acc;
+    },
+    {} as Record<string, (typeof pricing)[0]>,
+  );
+
+  const inventoryById = inventory.reduce(
+    (acc, item) => {
+      acc[item.productId] = item;
+      return acc;
+    },
+    {} as Record<string, (typeof inventory)[0]>,
+  );
+
+  // create a new array from the pridcuts array that includes the pricing and inventory daty
+  return products.map((product) => ({
+    ...product,
+    pricing: pricingById[product.id] || null,
+    inventory: inventoryById[product.id] || null,
+  }));
 }
 
 // ===== TEST YOUR SOLUTION =====
